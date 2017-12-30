@@ -2,7 +2,7 @@
 
 Colorscheme switcher for [termite](https://github.com/thestinger/termite) terminal
 
-![Animated demonstration](https://i.imgur.com/3a0ecTt.gif)
+![Animated demonstration](https://i.imgur.com/dfX4gAk.gif)
 
 ## Dependency
 
