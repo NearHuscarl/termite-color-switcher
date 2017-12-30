@@ -1,0 +1,36 @@
+#!/bin/env bash
+
+_color()
+{
+	local cur prev opts base colors
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	opts='--help --cycle --Cycle --edit --list --reload --switch'
+	colors=$(color --list)
+
+	case "${prev}" in
+		-e|--edit|-s|--switch)
+			COMPREPLY=( $(compgen -W "${colors}" -- ${cur}) )
+			return 0
+			;;
+		-*)
+			return 0
+			;;
+		*)
+			;;
+	esac
+
+	case "${cur}" in
+		-*)
+			COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+			return 0
+			;;
+		*)
+			COMPREPLY=($(compgen -W "${colors}" -- ${cur}))
+			return 0
+			;;
+	esac
+}
+
+complete -F _color color

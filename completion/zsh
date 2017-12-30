@@ -1,0 +1,32 @@
+#!/bin/env zsh
+
+if [[ ! -o interactive ]]; then
+	return
+fi
+
+compdef _color color
+
+function _color {
+	_arguments -C \
+		"-h[Show help information]:help:()" \
+		"--help[Show help information]:help:()" \
+		"-c[Cycle through available colorschemes]:cycle forward:()" \
+		"--cycle[Cycle through available colorschemes]:cycle forward:()" \
+		"-C[Cycle backward]:cycle backward:()" \
+		"--Cycle[Cycle backward]:cycle backward:()" \
+		"-e[Edit <colorscheme> file using \$EDITOR]:edit color:->colors" \
+		"--edit[Edit <colorscheme> file using \$EDITOR]:edit color:->colors" \
+		"-l[Print all available colorschemes]:list color:()" \
+		"--list[Print all available colorschemes]:list color:()" \
+		"-r[Reload current colorscheme]:reload color:()" \
+		"--reload[Reload current colorscheme]:reload color:()" \
+		"-s[Switch to <colorscheme>]:switch color:->colors" \
+		"--switch[Switch to <colorscheme>]:switch color:->colors" \
+		"1:colorscheme:->colors" \
+
+	case "$state" in
+		colors)
+			_values color $(color --list)
+			;;
+	esac
+}
