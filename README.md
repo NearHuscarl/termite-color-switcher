@@ -121,4 +121,4 @@ for various terminal (including termite)
 
 ## License
 
-[BSD 3-Clauses]()
+[BSD 3-Clause](https://github.com/NearHuscarl/termite-color-switcher/blob/master/LICENSE.md)
