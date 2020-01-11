@@ -91,7 +91,8 @@ function reload_current() {
         do      
                 if [ $(ps -p $current -o comm=) = "termite" ]; then
                         kill -USR1 $current
-                fi
+			break
+		fi
                 current=$(ps -p $current -o ppid=)
         done
 }
