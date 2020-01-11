@@ -13,7 +13,7 @@ set -o nounset
 
 # Global
 SCRIPT_NAME=$(basename "$0")
-USAGE="Usage: "$SCRIPT_NAME" [-h|-c|-C|-e [<colorscheme>]|-l|-r|[-s] <colorscheme>]"
+USAGE="Usage: "$SCRIPT_NAME" [-h|-c|-C|-e [<colorscheme>]|-l|-r|-R|[-s] <colorscheme>]"
 HELP="\
 "$SCRIPT_NAME" <colorscheme>
 Commands:
@@ -24,6 +24,7 @@ Commands:
                               default is current colorscheme
   -l, --list                  print all available colorschemes
   -r, --reload                reload current colorscheme
+  -R, --current		      reload only the first termite in process tree
   -s, --switch <colorscheme>  switch to <colorscheme>
   <colorscheme>               same as above"
 
@@ -77,13 +78,29 @@ function reload_colorscheme() {
 	reload_config
 }
 
+
+
 function edit_colorscheme() {
 	[[ "$#" == 0 ]] && local color_name="$(get_current_colorshceme)" || local color_name="$1"
 	"$EDITOR" "$COLOR_PATH"/"$color_name"
 }
 
+function reload_current() {
+        current=$$
+        while [ $current -ne 0 ];
+        do      
+                if [ $(ps -p $current -o comm=) = "termite" ]; then
+                        kill -USR1 $current
+                fi
+                current=$(ps -p $current -o ppid=)
+        done
+}
+
 function reload_config() {
-	killall -USR1 termite
+	if [ $only_current -eq 1 ]; then
+		reload_current
+	else killall -USR1 termite
+	fi
 }
 
 function list_colorscheme() {
@@ -131,6 +148,8 @@ function main() {
 	local THEME="$termite_path"'/theme'
 	local COLOR_PATH="$termite_path"'/color'
 
+	only_current=0
+
 	local cmd="${1:-}"
 	local color="${2:-}"
 	case "$#" in
@@ -162,6 +181,9 @@ function main() {
 				-e|--edit)
 					edit_colorscheme "$color" ;;
 				-s|--switch)
+					switch_colorscheme "$color" ;;
+				-R|--current)
+					only_current=1
 					switch_colorscheme "$color" ;;
 				-*)
 					die "Invalid argument\n""$USAGE" ;;
